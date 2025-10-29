@@ -1,0 +1,3 @@
+[default.extend-words]
+# Steam API field names
+packageid = "packageid"
