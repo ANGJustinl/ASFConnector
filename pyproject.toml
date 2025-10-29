@@ -22,10 +22,14 @@ dev = [
 ]
 
 [tool.poe.tasks]
-test = "pytest -v --cov=ASFConnector --cov-report=xml --cov-report=term-missing"
+test = "pytest -v --cov=ASFConnector --cov-report=xml --cov-report=term-missing -m 'not integration'"
+test-all = "pytest -v --cov=ASFConnector --cov-report=xml --cov-report=term-missing"
 
 [tool.pytest.ini_options]
 testpaths = ["."]
 python_files = ["test_*.py"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "integration: marks tests as integration tests requiring ASF instance (deselect with '-m \"not integration\"')",
+]
