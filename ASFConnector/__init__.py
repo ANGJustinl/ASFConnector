@@ -37,13 +37,27 @@ from .Controllers.enum import PurchaseResultDetail, Result
 from .Controllers.ASFController import ASFController
 from .Controllers.BotController import BotController
 from .Controllers.CommandController import CommandController
+from . import error as error_module
 from .Controllers.NLogController import NLogController
 from .Controllers.TypeController import TypeController
 from .Controllers.StructureController import StructureController
 from .Controllers.TwoFactorAuthenticationController import TwoFactorAuthenticationController
 from .config import ASFConfig, load_config
-
-
+from .error import (
+    ASFConnectorError,
+    ASFIPCError,
+    ASFHTTPError,
+    ASFNetworkError,
+    ASF_BadRequest,
+    ASF_Unauthorized,
+    ASF_Forbidden,
+    ASF_NotFound,
+    ASF_NotAllowed,
+    ASF_NotAcceptable,
+    ASF_LengthRequired,
+    ASF_NotImplemented,
+    HTTP_STATUS_EXCEPTION_MAP,
+)
 class ASFConnector:
     """
     Main connector class for ASF API with connection pool management.
@@ -82,6 +96,7 @@ class ASFConnector:
         logger.info(f"{__name__} initialized. Host: '{self.host}'. Port: '{self.port}'")
         # Create shared connection handler for all controllers
         self.connection_handler = IPCProtocolHandler(self.host, self.port, self.path, password)
+        self.error = error_module
         
         # Initialize controllers with shared connection handler
         self.asf = ASFController(self.connection_handler)
@@ -315,3 +330,33 @@ class ASFConnector:
         else:
             message += 'Command unsuccessful: {}'.format(response.get('Message', 'Unknown error'))
         return message
+
+
+__all__ = [
+    "ASFConnector",
+    "ASFConfig",
+    "load_config",
+    "ASFController",
+    "BotController",
+    "CommandController",
+    "NLogController",
+    "TypeController",
+    "StructureController",
+    "TwoFactorAuthenticationController",
+    "PurchaseResultDetail",
+    "Result",
+    "error",
+    "ASFConnectorError",
+    "ASFIPCError",
+    "ASFHTTPError",
+    "ASFNetworkError",
+    "ASF_BadRequest",
+    "ASF_Unauthorized",
+    "ASF_Forbidden",
+    "ASF_NotFound",
+    "ASF_NotAllowed",
+    "ASF_NotAcceptable",
+    "ASF_LengthRequired",
+    "ASF_NotImplemented",
+    "HTTP_STATUS_EXCEPTION_MAP",
+]

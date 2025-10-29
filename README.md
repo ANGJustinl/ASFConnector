@@ -383,6 +383,40 @@ else:
     print(f"Error: {error_msg}")
 ```
 
+当 IPC 请求触发 HTTP/网络异常时，响应字典中还会包含：
+
+- `ExceptionType`: 对应的自定义异常类名称（例如 `ASF_NotFound`）
+- `Exception`: 具体的异常实例，带有 `status_code` 与原始 `payload`
+- `StatusCode`: HTTP 状态码（若可用）
+- `ResponsePayload`: ASF 返回的 JSON 或纯文本内容（若可用）
+
+库中提供了统一的异常定义，可通过 `ASFConnector` 顶层导出或 `ASFConnector.error` 模块使用：
+
+```python
+from ASFConnector import ASF_BadRequest, ASF_NotFound
+
+response = await connector.type.get_type('ArchiSteamFarm.Storage.UnknownType')
+if not response['Success']:
+    exc = response['Exception']
+    if isinstance(exc, ASF_NotFound):
+        print("类型不存在，原始响应:", response.get('ResponsePayload'))
+    else:
+        raise exc  # 根据需要抛出或记录
+```
+
+所有内置异常均继承自 `ASFConnectorError`，常见 HTTP 状态与异常的映射如下：
+
+| HTTP 状态码 | 异常类型 |
+|-------------|----------|
+| 400 | `ASF_BadRequest` |
+| 401 | `ASF_Unauthorized` |
+| 403 | `ASF_Forbidden` |
+| 404 | `ASF_NotFound` |
+| 405 | `ASF_NotAllowed` |
+| 406 | `ASF_NotAcceptable` |
+| 411 | `ASF_LengthRequired` |
+| 501 | `ASF_NotImplemented` |
+
 
 ## 更多信息
 

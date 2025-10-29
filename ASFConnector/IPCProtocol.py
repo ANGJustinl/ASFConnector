@@ -6,6 +6,8 @@ import re
 import httpx
 from loguru import logger
 
+from . import error
+
 
 class IPCProtocolHandler:
     AUTH_HEADER = 'Authentication'
@@ -67,11 +69,7 @@ class IPCProtocolHandler:
         except httpx.HTTPError as ex:
             logger.error(f"Error Requesting {url} with parameters {parameters}")
             logger.exception(ex)
-            reason = extract_reason_from_exception(ex)
-            return {
-                'Success': False,
-                'Message': reason
-            }
+            return build_error_payload(ex)
         finally:
             if should_close:
                 await client.aclose()
@@ -102,11 +100,7 @@ class IPCProtocolHandler:
         except httpx.HTTPError as ex:
             logger.error(f"Error Requesting {url} with payload {payload}")
             logger.exception(ex)
-            reason = extract_reason_from_exception(ex)
-            return {
-                'Success': False,
-                'Message': reason
-            }
+            return build_error_payload(ex)
         finally:
             if should_close:
                 await client.aclose()
@@ -137,11 +131,7 @@ class IPCProtocolHandler:
         except httpx.HTTPError as ex:
             logger.error(f"Error DELETE {url} with parameters {parameters}")
             logger.exception(ex)
-            reason = extract_reason_from_exception(ex)
-            return {
-                'Success': False,
-                'Message': reason
-            }
+            return build_error_payload(ex)
         finally:
             if should_close:
                 await client.aclose()
@@ -172,3 +162,42 @@ def extract_reason_from_exception(ex: Exception):
         if match:
             return match.group('reason')
     return str(ex)
+
+
+def build_error_payload(ex: httpx.HTTPError):
+    status_code = None
+    response_payload = None
+
+    if isinstance(ex, httpx.HTTPStatusError) and ex.response is not None:
+        status_code = ex.response.status_code
+        response_payload = _safe_response_payload(ex.response)
+        exception_cls = error.HTTP_STATUS_EXCEPTION_MAP.get(status_code, error.ASFHTTPError)
+    elif isinstance(ex, httpx.RequestError):
+        exception_cls = error.ASFNetworkError
+    else:
+        exception_cls = error.ASFIPCError
+
+    message = extract_reason_from_exception(ex)
+    asf_exception = exception_cls(message, status_code=status_code, payload=response_payload)
+
+    payload = {
+        'Success': False,
+        'Message': message,
+        'ExceptionType': asf_exception.__class__.__name__,
+        'Exception': asf_exception,
+    }
+
+    if status_code is not None:
+        payload['StatusCode'] = status_code
+    if response_payload is not None:
+        payload['ResponsePayload'] = response_payload
+
+    return payload
+
+
+def _safe_response_payload(response: httpx.Response):
+    try:
+        return response.json()
+    except ValueError:
+        text = response.text.strip()
+        return text or None
