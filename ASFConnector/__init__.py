@@ -1,46 +1,46 @@
 # 25.10.28 Modified by angjustinl from dmcallejo/ASFBot/IPCProtocol
 # source code at https://github.com/dmcallejo/ASFBot
 # More informations see https://deepwiki.com/JustArchiNET/ArchiSteamFarm/4.1-api-controllers#asfcontroller
-import httpx
-import sys
 from pathlib import Path
-from typing import Optional
+import sys
+
+import httpx
 from loguru import logger
 
-from .IPCProtocol import IPCProtocolHandler
-from .Controllers.enum import PurchaseResultDetail, Result
+from . import error as error_module
+from .config import ASFConfig, asf_config, load_config
 from .Controllers.ASFController import ASFController
 from .Controllers.BotController import BotController
 from .Controllers.CommandController import CommandController
-from . import error as error_module
+from .Controllers.enum import PurchaseResultDetail, Result
 from .Controllers.NLogController import NLogController
-from .Controllers.TypeController import TypeController
 from .Controllers.StructureController import StructureController
 from .Controllers.TwoFactorAuthenticationController import (
     TwoFactorAuthenticationController,
 )
-from .config import ASFConfig, load_config, asf_config
+from .Controllers.TypeController import TypeController
 from .error import (
-    ASFConnectorError,
-    ASFIPCError,
-    ASFHTTPError,
-    ASFNetworkError,
-    ASF_BadRequest,
-    ASF_Unauthorized,
-    ASF_Forbidden,
-    ASF_NotFound,
-    ASF_NotAllowed,
-    ASF_NotAcceptable,
-    ASF_LengthRequired,
-    ASF_NotImplemented,
     HTTP_STATUS_EXCEPTION_MAP,
+    ASF_BadRequest,
+    ASF_Forbidden,
+    ASF_LengthRequired,
+    ASF_NotAcceptable,
+    ASF_NotAllowed,
+    ASF_NotFound,
+    ASF_NotImplemented,
+    ASF_Unauthorized,
+    ASFConnectorError,
+    ASFHTTPError,
+    ASFIPCError,
+    ASFNetworkError,
 )
+from .IPCProtocol import IPCProtocolHandler
 
 # Add console handler with INFO level
 logger.add(
     sys.stderr,
     level="INFO",
-    format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+    format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",  # noqa
 )
 
 # Add file handler with DEBUG level
@@ -78,12 +78,12 @@ class ASFConnector:
 
     def __init__(
         self,
-        host: Optional[str] = None,
-        port: Optional[str] = None,
-        path: Optional[str] = None,
-        password: Optional[str] = None,
-        config: Optional[ASFConfig] = None,
-        enable_rich_traceback: Optional[bool] = None,
+        host: str | None = None,
+        port: str | None = None,
+        path: str | None = None,
+        password: str | None = None,
+        config: ASFConfig | None = None,
+        enable_rich_traceback: bool | None = None,
     ):
         # Enable rich traceback for better error display
         if asf_config.enable_rich_traceback:
@@ -112,9 +112,7 @@ class ASFConnector:
 
         logger.info(f"{__name__} initialized. Host: '{self.host}'. Port: '{self.port}'")
         # Create shared connection handler for all controllers
-        self.connection_handler = IPCProtocolHandler(
-            self.host, self.port, self.path, password
-        )
+        self.connection_handler = IPCProtocolHandler(self.host, self.port, self.path, password)
         self.error = error_module
 
         # Initialize controllers with shared connection handler
@@ -127,7 +125,7 @@ class ASFConnector:
         self.twofa = TwoFactorAuthenticationController(self.connection_handler)
 
     @classmethod
-    def from_config(cls, config: Optional[ASFConfig] = None):
+    def from_config(cls, config: ASFConfig | None = None):
         """
         Create ASFConnector from configuration.
 
@@ -223,9 +221,7 @@ class ASFConnector:
                     }
                 else:
                     # Raise HTTP error for non-200 responses
-                    raise ASFHTTPError(
-                        f"HTTP {response.status_code}", status_code=response.status_code
-                    )
+                    raise ASFHTTPError(f"HTTP {response.status_code}", status_code=response.status_code)
         except httpx.HTTPError as ex:
             logger.error(f"Health check failed: {ex}")
             # Convert httpx exceptions to ASFConnector exceptions
@@ -257,7 +253,7 @@ class ASFConnector:
         if "Result" in response:
             message = ""
             for bot_name in response["Result"]:
-                message += "Bot {}: ".format(bot_name)
+                message += f"Bot {bot_name}: "
                 bot = response["Result"][bot_name]
                 if bot["IsConnectedAndLoggedOn"]:
                     cards_farmer = bot["CardsFarmer"]
@@ -270,21 +266,17 @@ class ASFConnector:
                         appid = current_games["AppID"]
                         appname = current_games["GameName"]
                         cards_remaining = current_games["CardsRemaining"]
-                        farm_message += "\n\t[{}/{}] {} cards remaining.".format(
-                            appid, appname, cards_remaining
-                        )
+                        farm_message += f"\n\t[{appid}/{appname}] {cards_remaining} cards remaining."
                     if len(cards_farmer["GamesToFarm"]) > 0:
-                        farm_message += " {} game(s) to farm (".format(
-                            len(cards_farmer["GamesToFarm"])
-                        )
+                        farm_message += " {} game(s) to farm (".format(len(cards_farmer["GamesToFarm"]))
                         for games_to_farm in cards_farmer["GamesToFarm"]:
                             appid = games_to_farm["AppID"]
                             appname = games_to_farm["GameName"]
-                            farm_message += "[{}/{}] ".format(appid, appname)
+                            farm_message += f"[{appid}/{appname}] "
                         farm_message = farm_message[:-1] + "). "
                     time_remaining = cards_farmer["TimeRemaining"]
                     if time_remaining != "00:00:00":
-                        farm_message += "Time remaining: {}".format(time_remaining)
+                        farm_message += f"Time remaining: {time_remaining}"
                     if len(farm_message) == 0:
                         farm_message += "Idle."
                     message += farm_message + "\n"
@@ -294,7 +286,7 @@ class ASFConnector:
                     else:
                         message += "Offline.\n"
         elif response["Success"]:
-            message = "Bot {} not found.".format(bot)
+            message = f"Bot {bot} not found."
         else:
             message = "Getting bot info failed: {}".format(response["Message"])
         return message
@@ -314,18 +306,13 @@ class ASFConnector:
                 bot = results[bot_name]
                 for key in bot:
                     if bot[key]:
-                        message += "Bot {}: \n".format(bot_name)
-                        if (
-                            "purchase_receipt_info" in bot[key]
-                            and bot[key]["purchase_receipt_info"]
-                        ):
+                        message += f"Bot {bot_name}: \n"
+                        if "purchase_receipt_info" in bot[key] and bot[key]["purchase_receipt_info"]:
                             purchase_receipt_info = bot[key]["purchase_receipt_info"]
                             items = ""
                             # Parse items in the key
                             for item in purchase_receipt_info["line_items"]:
-                                items += "[{}, {}] ".format(
-                                    item["packageid"], item["line_item_description"]
-                                )
+                                items += "[{}, {}] ".format(item["packageid"], item["line_item_description"])
                             # Build message with the receipt info and the items
                             message += "\t[{}] {}: {}/{}\n".format(
                                 key,
@@ -335,25 +322,19 @@ class ASFConnector:
                                 else Result[purchase_receipt_info["purchase_status"]],
                                 purchase_receipt_info["result_detail"]
                                 if type(purchase_receipt_info["result_detail"]) is str
-                                else PurchaseResultDetail[
-                                    purchase_receipt_info["result_detail"]
-                                ],
+                                else PurchaseResultDetail[purchase_receipt_info["result_detail"]],
                             )
                         else:
                             message += "\t[{}] {}/{}\n".format(
                                 key,
-                                bot[key]["Result"]
-                                if type(bot[key]["Result"]) is str
-                                else Result[bot[key]["Result"]],
+                                bot[key]["Result"] if type(bot[key]["Result"]) is str else Result[bot[key]["Result"]],
                                 bot[key]["PurchaseResultDetail"]
                                 if type(bot[key]["PurchaseResultDetail"]) is str
-                                else PurchaseResultDetail[
-                                    bot[key]["PurchaseResultDetail"]
-                                ],
+                                else PurchaseResultDetail[bot[key]["PurchaseResultDetail"]],
                             )
 
         elif response["Success"]:
-            message = "Bot {} not found.".format(bot)
+            message = f"Bot {bot} not found."
         else:
             message = "Redeem failed: {}".format(response["Message"])
         return message
@@ -373,37 +354,35 @@ class ASFConnector:
         if response.get("Success"):
             message += response.get("Result", "")
         else:
-            message += "Command unsuccessful: {}".format(
-                response.get("Message", "Unknown error")
-            )
+            message += "Command unsuccessful: {}".format(response.get("Message", "Unknown error"))
         return message
 
 
 __all__ = [
-    "ASFConnector",
+    "HTTP_STATUS_EXCEPTION_MAP",
     "ASFConfig",
-    "load_config",
+    "ASFConnector",
+    "ASFConnectorError",
     "ASFController",
+    "ASFHTTPError",
+    "ASFIPCError",
+    "ASFNetworkError",
+    "ASF_BadRequest",
+    "ASF_Forbidden",
+    "ASF_LengthRequired",
+    "ASF_NotAcceptable",
+    "ASF_NotAllowed",
+    "ASF_NotFound",
+    "ASF_NotImplemented",
+    "ASF_Unauthorized",
     "BotController",
     "CommandController",
     "NLogController",
-    "TypeController",
-    "StructureController",
-    "TwoFactorAuthenticationController",
     "PurchaseResultDetail",
     "Result",
+    "StructureController",
+    "TwoFactorAuthenticationController",
+    "TypeController",
     "error",
-    "ASFConnectorError",
-    "ASFIPCError",
-    "ASFHTTPError",
-    "ASFNetworkError",
-    "ASF_BadRequest",
-    "ASF_Unauthorized",
-    "ASF_Forbidden",
-    "ASF_NotFound",
-    "ASF_NotAllowed",
-    "ASF_NotAcceptable",
-    "ASF_LengthRequired",
-    "ASF_NotImplemented",
-    "HTTP_STATUS_EXCEPTION_MAP",
+    "load_config",
 ]

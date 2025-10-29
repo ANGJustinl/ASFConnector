@@ -3,6 +3,7 @@ name = "asfconnector"
 version = "0.0.1"
 description = "Another Python wrapper of ArchiSteamFarm IPC API"
 readme = "README.md"
+authors = [{ name = "ANGJustinl", email = "angjustinl@gmail.com" }]
 requires-python = ">=3.10"
 dependencies = [
     "dotenv>=0.9.9",
@@ -12,3 +13,156 @@ dependencies = [
     "pydantic-settings>=2.11.0",
     "rich>=14.2.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/ANGJustinl/asfconnector"
+Repository = "https://github.com/ANGJustinl/asfconnector.git"
+Issues = "https://github.com/ANGJustinl/asfconnector/issues"
+
+
+[dependency-groups]
+dev = [
+  "ruff>=0.13.2,<1.0.0",
+  "pre-commit>=4.3.0",
+  "bump-my-version>=1.2.3",
+]
+
+test = [
+  "pytest>=8.0.0",
+  "pytest-xdist>=3.8.0,<4.0.0",
+  "pytest-asyncio>=1.2.0,<1.3.0",
+  "pytest-cov>=7.0.0",
+  "pytest-mock>=3.12.0",
+  "poethepoet>=0.36.0",
+  "httpx>=0.28.1",
+]
+
+[tool.uv]
+required-version = ">=0.8.14"
+default-groups = ["test", "dev"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = [
+  "-v",                     # 详细输出
+  "-s",                     # 显示打印信息
+  "--tb=short",             # 简短的错误回溯
+  "-ra",                    # 显示所有测试结果摘要
+  "--strict-markers",       # 严格标记模式
+  "--import-mode=importlib", # 导入模式
+  "--asyncio-mode=auto",    # 自动异步模式
+]
+
+
+[tool.poe.tasks]
+test = "pytest tests/ --cov=ASFConnector --cov-report=xml --junitxml=./junit.xml -n auto"
+bump = "bump-my-version bump"
+show-bump = "bump-my-version show-bump"
+
+[tool.coverage.run]
+source = ["ASFConnector"]
+omit = [
+  "*/tests/*",
+  "*/test_*.py",
+  "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "raise NotImplementedError",
+  "if TYPE_CHECKING:",
+  "@overload",
+  "except ImportError:",
+  "if __name__ == .__main__.:",
+  "def __repr__",
+  "logger\\.",
+]
+precision = 2
+show_missing = true
+skip_covered = false
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.format]
+line-ending = "lf"
+
+[tool.ruff.lint]
+select = [
+  "F",     # Pyflakes
+  "W",     # pycodestyle warnings
+  "E",     # pycodestyle errors
+  "I",     # isort
+  "UP",    # pyupgrade
+  "ASYNC", # flake8-async
+  "C4",    # flake8-comprehensions
+  "T10",   # flake8-debugger
+  "T20",   # flake8-print
+  "PYI",   # flake8-pyi
+  "PT",    # flake8-pytest-style
+  "Q",     # flake8-quotes
+  "TID",   # flake8-tidy-imports
+  "RUF",   # Ruff-specific rules
+]
+
+ignore = [
+  "E402",   # module-import-not-at-top-of-file
+  "UP037",  # quoted-annotation
+  "RUF001", # ambiguous-unicode-character-string
+  "RUF002", # ambiguous-unicode-character-docstring
+  "RUF003", # ambiguous-unicode-character-comment
+  "W191",   # indentation contains tabs
+  "TID252", # relative import
+]
+
+
+[tool.ruff.lint.isort]
+force-sort-within-sections = true
+known-first-party = ["tests/*"]
+extra-standard-library = ["typing_extensions"]
+
+[tool.ruff.lint.flake8-pytest-style]
+fixture-parentheses = false
+mark-parentheses = false
+
+[tool.ruff.lint.pyupgrade]
+keep-runtime-typing = true
+
+
+[tool.pyright]
+pythonVersion = "3.10"
+pythonPlatform = "All"
+defineConstant = { PYDANTIC_V2 = true }
+executionEnvironments = [
+  { root = "./tests", extraPaths = [
+    ".",
+  ] },
+  { root = "." },
+]
+typeCheckingMode = "standard"
+reportShadowedImports = false
+disableBytesTypePromotions = true
+
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["ASFConnector"]
+
+[tool.bumpversion]
+current_version = "0.1.0"
+commit = true
+message = "🔖 release: bump vesion from {current_version} to {new_version}"
+tag = true
+
+[[tool.bumpversion.files]]
+filename = "uv.lock"
+search = "name = \"asfconnector\"\nversion = \"{current_version}\""
+replace = "name = \"asfconnector\"\nversion = \"{new_version}\""

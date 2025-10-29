@@ -11,9 +11,7 @@ class ASFConnectorError(Exception):
         self.payload = payload
 
     def __repr__(self):
-        status = (
-            f" status_code={self.status_code}" if self.status_code is not None else ""
-        )
+        status = f" status_code={self.status_code}" if self.status_code is not None else ""
         return f"<{self.__class__.__name__}{status} message={self.args[0]!r}>"
 
 
@@ -80,17 +78,17 @@ HTTP_STATUS_EXCEPTION_MAP = {
 
 
 __all__ = [
+    "HTTP_STATUS_EXCEPTION_MAP",
     "ASFConnectorError",
-    "ASFIPCError",
     "ASFHTTPError",
+    "ASFIPCError",
     "ASFNetworkError",
     "ASF_BadRequest",
-    "ASF_Unauthorized",
     "ASF_Forbidden",
-    "ASF_NotFound",
-    "ASF_NotAllowed",
-    "ASF_NotAcceptable",
     "ASF_LengthRequired",
+    "ASF_NotAcceptable",
+    "ASF_NotAllowed",
+    "ASF_NotFound",
     "ASF_NotImplemented",
-    "HTTP_STATUS_EXCEPTION_MAP",
+    "ASF_Unauthorized",
 ]

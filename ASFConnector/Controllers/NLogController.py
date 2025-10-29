@@ -27,9 +27,7 @@ class NLogController(BaseController):
         Returns:
             dict: Information about WebSocket requirement
         """
-        self.logger.warning(
-            "WebSocket endpoint - requires WebSocket client for real-time log streaming"
-        )
+        self.logger.warning("WebSocket endpoint - requires WebSocket client for real-time log streaming")
         return {
             "Success": False,
             "Message": "This endpoint requires WebSocket connection. Use WebSocket client to connect to ws://host:port/Api/NLog",

@@ -1,5 +1,3 @@
-from typing import Optional
-
 from .BaseController import BaseController
 
 
@@ -151,8 +149,8 @@ class BotController(BaseController):
     async def get_inventory(
         self,
         bot_names: str,
-        app_id: Optional[int] = None,
-        context_id: Optional[int] = None,
+        app_id: int | None = None,
+        context_id: int | None = None,
     ):
         """
         GET /Api/Bot/{botNames}/Inventory or /Api/Bot/{botNames}/Inventory/{appID}/{contextID}
@@ -219,9 +217,7 @@ class BotController(BaseController):
         resource = f"/Bot/{bot_names}/GamesToRedeemInBackground"
         return await self._get(resource)
 
-    async def add_games_to_redeem_in_background(
-        self, bot_names: str, games_to_redeem: dict
-    ):
+    async def add_games_to_redeem_in_background(self, bot_names: str, games_to_redeem: dict):
         """
         POST /Api/Bot/{botNames}/GamesToRedeemInBackground
         Adds keys to background game redeemer.

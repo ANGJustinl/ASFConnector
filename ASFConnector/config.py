@@ -3,9 +3,9 @@ Configuration module for ASFConnector using Pydantic.
 Reads configuration from .env file with validation.
 """
 
-from pydantic import Field, field_validator, ValidationError
-from pydantic_settings import BaseSettings, SettingsConfigDict
 from loguru import logger
+from pydantic import Field, ValidationError, field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class ASFConfig(BaseSettings):
@@ -15,24 +15,18 @@ class ASFConfig(BaseSettings):
     Reads from environment variables or .env file.
     """
 
-    model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", case_sensitive=False, extra="ignore"
-    )
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=False, extra="ignore")
 
     # ASF IPC settings with defaults
     asf_host: str = Field(default="127.0.0.1", description="ASF IPC host address")
 
     asf_port: str = Field(default="1242", description="ASF IPC port")
 
-    asf_password: str | None = Field(
-        default=None, description="ASF IPC password (optional)"
-    )
+    asf_password: str | None = Field(default=None, description="ASF IPC password (optional)")
 
     asf_path: str = Field(default="/Api", description="ASF IPC API path")
 
-    enable_rich_traceback: bool = Field(
-        default=False, description="Enable rich traceback for better error display"
-    )
+    enable_rich_traceback: bool = Field(default=False, description="Enable rich traceback for better error display")
 
     @field_validator("asf_host")
     @classmethod

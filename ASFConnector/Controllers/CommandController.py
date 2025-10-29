@@ -32,7 +32,7 @@ class CommandController(BaseController):
         """
         self.logger.debug(f"Execute command: {command}")
         self.logger.warning(
-            "CommandController.execute() is a legacy endpoint. Consider using ASFController or BotController methods instead."
+            "CommandController.execute() is a legacy endpoint. Consider using ASFController or BotController methods instead."  # noqa
         )
         resource = "/Command"
         payload = {"Command": command}

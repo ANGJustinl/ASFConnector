@@ -11,7 +11,7 @@ from . import error
 
 class IPCProtocolHandler:
     AUTH_HEADER = "Authentication"
-    _DEFAULT_HEADERS = {
+    _DEFAULT_HEADERS = {  # noqa
         "user-agent": "ASFBot",
         "Accept": "application/json",
     }
@@ -193,18 +193,14 @@ def raise_asf_exception(ex: httpx.HTTPError):
     if isinstance(ex, httpx.HTTPStatusError) and ex.response is not None:
         status_code = ex.response.status_code
         response_payload = _safe_response_payload(ex.response)
-        exception_cls = error.HTTP_STATUS_EXCEPTION_MAP.get(
-            status_code, error.ASFHTTPError
-        )
+        exception_cls = error.HTTP_STATUS_EXCEPTION_MAP.get(status_code, error.ASFHTTPError)
     elif isinstance(ex, httpx.RequestError):
         exception_cls = error.ASFNetworkError
     else:
         exception_cls = error.ASFIPCError
 
     message = extract_reason_from_exception(ex)
-    asf_exception = exception_cls(
-        message, status_code=status_code, payload=response_payload
-    )
+    asf_exception = exception_cls(message, status_code=status_code, payload=response_payload)
 
     raise asf_exception from ex
 
@@ -228,18 +224,14 @@ def build_error_payload(ex: httpx.HTTPError):
     if isinstance(ex, httpx.HTTPStatusError) and ex.response is not None:
         status_code = ex.response.status_code
         response_payload = _safe_response_payload(ex.response)
-        exception_cls = error.HTTP_STATUS_EXCEPTION_MAP.get(
-            status_code, error.ASFHTTPError
-        )
+        exception_cls = error.HTTP_STATUS_EXCEPTION_MAP.get(status_code, error.ASFHTTPError)
     elif isinstance(ex, httpx.RequestError):
         exception_cls = error.ASFNetworkError
     else:
         exception_cls = error.ASFIPCError
 
     message = extract_reason_from_exception(ex)
-    asf_exception = exception_cls(
-        message, status_code=status_code, payload=response_payload
-    )
+    asf_exception = exception_cls(message, status_code=status_code, payload=response_payload)
 
     payload = {
         "Success": False,
