@@ -1,6 +1,6 @@
 # 25.10.28 Modified by angjustinl from dmcallejo/ASFBot/IPCProtocol
 # source code at https://github.com/dmcallejo/ASFBot
-# More informations see https://deepwiki.com/JustArchiNET/ArchiSteamFarm/4.1-api-controllers#asfcontroller
+# More information see https://deepwiki.com/JustArchiNET/ArchiSteamFarm/4.1-api-controllers#asfcontroller
 from pathlib import Path
 import sys
 
