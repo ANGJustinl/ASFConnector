@@ -10,6 +10,7 @@ on:
       - "tests/**"
       - "pyproject.toml"
       - "uv.lock"
+  workflow_dispatch:
 
 jobs:
   typos:
