@@ -6,8 +6,8 @@ on:
       - master
   pull_request:
     paths:
-      - "src/**"
-      - "tests/**"
+      - "ASFConnector/**"
+      - "test_*.py"
       - "pyproject.toml"
       - "uv.lock"
 
@@ -39,6 +39,12 @@ jobs:
       OS: ${{ matrix.os }}
       PYTHON: ${{ matrix.python-version }}
       UV_NO_SYNC: 1
+      # ASF test configuration - these will be used if no .env file exists
+      ASF_HOST: 127.0.0.1
+      ASF_PORT: 1242
+      ASF_PASSWORD: ""
+      ASF_PATH: /Api
+      ENABLE_RICH_TRACEBACK: false
 
     steps:
       - uses: actions/checkout@v5
@@ -51,7 +57,7 @@ jobs:
           version: "latest"
 
       - name: Install Dependencies for test group
-        run: uv sync --no-dev --locked
+        run: uv sync --group dev --locked
 
       - name: Run Pytest
         run: uv run poe test
