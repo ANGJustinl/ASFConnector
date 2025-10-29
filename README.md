@@ -1,8 +1,19 @@
-# ASFConnector API 文档
+<div align="center">
 
-## 概述
+# ASFConnector API
 
-ASFConnector 是一个用于与 ArchiSteamFarm (ASF) IPC API 交互的异步 Python 客户端。该库采用模块化架构，支持连接池复用，提供高性能的 API 调用体验。
+ASFConnector 是一个用于与 ArchiSteamFarm (ASF) IPC API 交互的异步 Python 客户端。采用模块化架构，支持连接池复用，提供高性能的 API 调用体验。
+
+<a href="https://www.python.org">
+  <img src="https://img.shields.io/github/languages/top/angjustinl/ASFConnector" alt="languages">
+</a> 
+<img src="https://img.shields.io/github/license/ANGJustinl/ASFConnector" alt="license">
+<img src="https://img.shields.io/badge/python-3.12-blue.svg" alt="python">
+<img src="https://img.shields.io/badge/asyncio-supported-brightgreen.svg" alt="asyncio">
+<img src="https://img.shields.io/badge/ASF-6.2.2.3--latest%20supported-black.svg" alt="ASF">
+<img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="ruff">
+</div>
+
 
 ## 架构设计
 
@@ -50,6 +61,7 @@ cp .env.example .env
 ASF_HOST=127.0.0.1
 ASF_PORT=1242
 ASF_PASSWORD=your_ipc_password
+ENABLE_RICH_TRACEBACK=False
 ```
 
 ### 基本用法（推荐）

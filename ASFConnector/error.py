@@ -11,7 +11,9 @@ class ASFConnectorError(Exception):
         self.payload = payload
 
     def __repr__(self):
-        status = f" status_code={self.status_code}" if self.status_code is not None else ""
+        status = (
+            f" status_code={self.status_code}" if self.status_code is not None else ""
+        )
         return f"<{self.__class__.__name__}{status} message={self.args[0]!r}>"
 
 

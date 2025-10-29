@@ -10,14 +10,14 @@ from . import error
 
 
 class IPCProtocolHandler:
-    AUTH_HEADER = 'Authentication'
+    AUTH_HEADER = "Authentication"
     _DEFAULT_HEADERS = {
-        'user-agent': 'ASFBot',
-        'Accept': 'application/json',
+        "user-agent": "ASFBot",
+        "Accept": "application/json",
     }
 
-    def __init__(self, host, port, path='/', password=None):
-        self.base_url = 'http://' + host + ':' + port + path
+    def __init__(self, host, port, path="/", password=None):
+        self.base_url = "http://" + host + ":" + port + path
         self.headers = self._DEFAULT_HEADERS.copy()
         if password:
             self.headers[self.AUTH_HEADER] = password
@@ -46,12 +46,12 @@ class IPCProtocolHandler:
         if parameters is None:
             parameters = {}
         if not isinstance(parameters, dict):
-            message = "\"parameters\" variable must be a dictionary"
+            message = '"parameters" variable must be a dictionary'
             logger.error(message)
             raise TypeError(message)
         url = self.base_url + resource  # TODO: refactor
         logger.debug(f"Requesting {url} with parameters {parameters}")
-        
+
         # Use reusable client if available, otherwise create temporary one
         if self._client:
             client = self._client
@@ -59,7 +59,7 @@ class IPCProtocolHandler:
         else:
             client = httpx.AsyncClient(headers=self.headers)
             should_close = True
-        
+
         try:
             response = await client.get(url, params=parameters)
             response.raise_for_status()
@@ -69,7 +69,7 @@ class IPCProtocolHandler:
         except httpx.HTTPError as ex:
             logger.error(f"Error Requesting {url} with parameters {parameters}")
             logger.exception(ex)
-            return build_error_payload(ex)
+            raise_asf_exception(ex)
         finally:
             if should_close:
                 await client.aclose()
@@ -77,12 +77,12 @@ class IPCProtocolHandler:
     async def post(self, resource, payload=None):
         if payload:
             if not isinstance(payload, dict):
-                message = "\"payload\" must be a dictionary"
+                message = '"payload" must be a dictionary'
                 logger.error(message)
                 raise TypeError(message)
         url = self.base_url + resource  # TODO: refactor
         logger.debug(f"Requesting {url} with payload {payload}")
-        
+
         # Use reusable client if available, otherwise create temporary one
         if self._client:
             client = self._client
@@ -90,7 +90,7 @@ class IPCProtocolHandler:
         else:
             client = httpx.AsyncClient(headers=self.headers)
             should_close = True
-        
+
         try:
             response = await client.post(url, json=payload)
             response.raise_for_status()
@@ -100,16 +100,16 @@ class IPCProtocolHandler:
         except httpx.HTTPError as ex:
             logger.error(f"Error Requesting {url} with payload {payload}")
             logger.exception(ex)
-            return build_error_payload(ex)
+            raise_asf_exception(ex)
         finally:
             if should_close:
                 await client.aclose()
-                
+
     async def delete(self, resource, parameters=None):
         if parameters is None:
             parameters = {}
         if not isinstance(parameters, dict):
-            message = "\"parameters\" variable must be a dictionary"
+            message = '"parameters" variable must be a dictionary'
             logger.error(message)
             raise TypeError(message)
         url = self.base_url + resource
@@ -131,19 +131,29 @@ class IPCProtocolHandler:
         except httpx.HTTPError as ex:
             logger.error(f"Error DELETE {url} with parameters {parameters}")
             logger.exception(ex)
-            return build_error_payload(ex)
+            raise_asf_exception(ex)
         finally:
             if should_close:
                 await client.aclose()
 
 
+def _safe_response_payload(response: httpx.Response):
+    """Extract response payload safely, trying JSON first, then text."""
+    try:
+        return response.json()
+    except ValueError:
+        text = response.text.strip()
+        return text or None
+
+
 def extract_reason_from_exception(ex: Exception):
+    """Extract human-readable error message from an exception."""
     if isinstance(ex, httpx.HTTPStatusError):
         response = ex.response
         if response is not None:
             try:
                 data = response.json()
-                for key in ('Message', 'message', 'Error', 'error', 'detail'):
+                for key in ("Message", "message", "Error", "error", "detail"):
                     if key in data:
                         return str(data[key])
             except ValueError:
@@ -158,46 +168,89 @@ def extract_reason_from_exception(ex: Exception):
         if isinstance(ex_args, Exception):
             ex_reason = ex_args.reason
             return extract_reason_from_exception(ex_reason)
-        match = re.match('(^.*0x\\w+>:\\s+)?(?P<reason>.*)$', str(ex_args))
+        match = re.match("(^.*0x\\w+>:\\s+)?(?P<reason>.*)$", str(ex_args))
         if match:
-            return match.group('reason')
+            return match.group("reason")
     return str(ex)
 
 
-def build_error_payload(ex: httpx.HTTPError):
+def raise_asf_exception(ex: httpx.HTTPError):
+    """
+    Convert httpx exceptions to ASFConnector exceptions and raise them.
+
+    Args:
+        ex: The httpx exception to convert
+
+    Raises:
+        ASFNetworkError: For network/connection errors
+        ASF_* exceptions: For specific HTTP status codes (400, 401, 403, etc.)
+        ASFHTTPError: For other HTTP errors
+        ASFIPCError: For other IPC errors
+    """
     status_code = None
     response_payload = None
 
     if isinstance(ex, httpx.HTTPStatusError) and ex.response is not None:
         status_code = ex.response.status_code
         response_payload = _safe_response_payload(ex.response)
-        exception_cls = error.HTTP_STATUS_EXCEPTION_MAP.get(status_code, error.ASFHTTPError)
+        exception_cls = error.HTTP_STATUS_EXCEPTION_MAP.get(
+            status_code, error.ASFHTTPError
+        )
     elif isinstance(ex, httpx.RequestError):
         exception_cls = error.ASFNetworkError
     else:
         exception_cls = error.ASFIPCError
 
     message = extract_reason_from_exception(ex)
-    asf_exception = exception_cls(message, status_code=status_code, payload=response_payload)
+    asf_exception = exception_cls(
+        message, status_code=status_code, payload=response_payload
+    )
+
+    raise asf_exception from ex
+
+
+def build_error_payload(ex: httpx.HTTPError):
+    """
+    Build an error payload dictionary from an httpx exception.
+
+    This is kept for backward compatibility and debugging purposes.
+    New code should use raise_asf_exception() instead to properly propagate exceptions.
+
+    Args:
+        ex: The httpx exception to convert
+
+    Returns:
+        dict: Error information dictionary
+    """
+    status_code = None
+    response_payload = None
+
+    if isinstance(ex, httpx.HTTPStatusError) and ex.response is not None:
+        status_code = ex.response.status_code
+        response_payload = _safe_response_payload(ex.response)
+        exception_cls = error.HTTP_STATUS_EXCEPTION_MAP.get(
+            status_code, error.ASFHTTPError
+        )
+    elif isinstance(ex, httpx.RequestError):
+        exception_cls = error.ASFNetworkError
+    else:
+        exception_cls = error.ASFIPCError
+
+    message = extract_reason_from_exception(ex)
+    asf_exception = exception_cls(
+        message, status_code=status_code, payload=response_payload
+    )
 
     payload = {
-        'Success': False,
-        'Message': message,
-        'ExceptionType': asf_exception.__class__.__name__,
-        'Exception': asf_exception,
+        "Success": False,
+        "Message": message,
+        "ExceptionType": asf_exception.__class__.__name__,
+        "Exception": asf_exception,
     }
 
     if status_code is not None:
-        payload['StatusCode'] = status_code
+        payload["StatusCode"] = status_code
     if response_payload is not None:
-        payload['ResponsePayload'] = response_payload
+        payload["ResponsePayload"] = response_payload
 
     return payload
-
-
-def _safe_response_payload(response: httpx.Response):
-    try:
-        return response.json()
-    except ValueError:
-        text = response.text.strip()
-        return text or None
