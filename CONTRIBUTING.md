@@ -128,7 +128,7 @@ ruff format .
 
 4. Commit your changes with clear messages:
 ```bash
-git commit -m "feat: add new feature"
+git commit -m "feat: add ASF connection timeout handling"
 ```
 
 5. Push and create a pull request
