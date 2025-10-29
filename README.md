@@ -2,7 +2,7 @@
 
 # ASFConnector API
 
-ASFConnector 是一个用于与 ArchiSteamFarm (ASF) IPC API 交互的异步 Python 客户端。采用模块化架构，支持连接池复用，提供高性能的 API 调用体验。
+ASFConnector is an asynchronous Python client for interacting with the ArchiSteamFarm (ASF) IPC API. It features a modular architecture with connection pool reuse, providing high-performance API call experience.
 
 <a href="https://www.python.org">
   <img src="https://img.shields.io/github/languages/top/angjustinl/ASFConnector" alt="languages">
@@ -14,49 +14,50 @@ ASFConnector 是一个用于与 ArchiSteamFarm (ASF) IPC API 交互的异步 Pyt
 <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="ruff">
 </div>
 
+### [Chinese | 中文文档](./docs/README_zh.md)
 
-## 架构设计
+## Architecture Design
 
-### 核心组件
+### Core Components
 
 1. **ASFConnector** (`__init__.py`)
-   - 主入口类，管理连接生命周期
-   - 统一管理所有 Controller 实例
-   - 支持 `async with` 上下文管理器以复用连接池
+   - Main entry class managing connection lifecycle
+   - Unified management of all Controller instances
+   - Supports `async with` context manager for connection pool reuse
 
 2. **IPCProtocolHandler** (`IPCProtocol.py`)
-   - 底层 HTTP 客户端封装
-   - 使用 `httpx.AsyncClient` 实现异步请求
-   - 支持连接池复用以提升性能
+   - Low-level HTTP client wrapper
+   - Implements asynchronous requests using `httpx.AsyncClient`
+   - Supports connection pool reuse for improved performance
 
 3. **BaseController** (`BaseController.py`)
-   - 所有 Controller 的基类
-   - 提供通用的 GET/POST/DELETE 请求方法
-   - 统一日志记录
+   - Base class for all Controllers
+   - Provides common GET/POST/DELETE request methods
+   - Unified logging
 
 4. **ASFConfig** (`config.py`)
-   - 基于 Pydantic 的配置管理
-   - 支持从 .env 文件加载配置
-   - 自动验证配置参数
+   - Pydantic-based configuration management
+   - Supports loading configuration from .env files
+   - Automatic parameter validation
 
-5. **Controller 模块**
-   - **ASFController**: ASF 全局操作（获取信息、更新配置、重启等）
-   - **BotController**: Bot 相关操作（启动、停止、兑换等）
-   - **NLogController**: 日志相关操作（获取日志文件）
-   - **TypeController**: 类型信息查询
-   - **StructureController**: 结构信息查询
-   - **CommandController**: 命令执行（已标记为遗留功能）
+5. **Controller Modules**
+   - **ASFController**: ASF global operations (get info, update config, restart, etc.)
+   - **BotController**: Bot-related operations (start, stop, redeem, etc.)
+   - **NLogController**: Logging operations (retrieve log files)
+   - **TypeController**: Type information queries
+   - **StructureController**: Structure information queries
+   - **CommandController**: Command execution (marked as legacy)
 
-## 快速开始
+## Quick Start
 
-### 配置设置
+### Configuration Setup
 
-1. 复制 `.env.example` 到 `.env`:
+1. Copy `.env.example` to `.env`:
 ```bash
 cp .env.example .env
 ```
 
-2. 编辑 `.env` 文件:
+2. Edit the `.env` file:
 ```env
 ASF_HOST=127.0.0.1
 ASF_PORT=1242
@@ -64,29 +65,29 @@ ASF_PASSWORD=your_ipc_password
 ENABLE_RICH_TRACEBACK=False
 ```
 
-### 基本用法（推荐）
+### Basic Usage (Recommended)
 
-使用 `.env` 配置文件，自动加载配置：
+Use `.env` configuration file with automatic loading:
 
 ```python
 import asyncio
 from ASFConnector import ASFConnector
 
 async def main():
-    # 从 .env 文件自动加载配置
+    # Auto-load configuration from .env file
     async with ASFConnector.from_config() as connector:
-        # 获取 ASF 信息
+        # Get ASF info
         asf_info = await connector.asf.get_info()
         print(f"ASF Version: {asf_info['Result']['Version']}")
         
-        # 获取 Bot 信息
+        # Get Bot info
         bot_info = await connector.bot.get_info('bot_name')
         print(bot_info)
 
 asyncio.run(main())
 ```
 
-### 使用自定义配置
+### Using Custom Configuration
 
 ```python
 import asyncio
@@ -94,7 +95,7 @@ from ASFConnector import ASFConnector
 from ASFConnector.config import ASFConfig
 
 async def main():
-    # 创建自定义配置
+    # Create custom configuration
     config = ASFConfig(
         asf_host='192.168.1.100',
         asf_port='8080',
@@ -108,14 +109,14 @@ async def main():
 asyncio.run(main())
 ```
 
-### 直接传参（向后兼容）
+### Direct Parameters (Backward Compatible)
 
 ```python
 import asyncio
 from ASFConnector import ASFConnector
 
 async def main():
-    # 直接传参创建连接
+    # Create connection with direct parameters
     async with ASFConnector(
         host='127.0.0.1',
         port='1242',
@@ -127,18 +128,18 @@ async def main():
 asyncio.run(main())
 ```
 
-## API 参考
+## API Reference
 
 ### ASFController
 
 #### `get_info()`
-获取 ASF 全局信息。
+Get ASF global information.
 
 ```python
 info = await connector.asf.get_info()
 ```
 
-**响应示例：**
+**Response Example:**
 ```json
 {
     "Success": true,
@@ -151,7 +152,7 @@ info = await connector.asf.get_info()
 ```
 
 #### `update_config(config: dict)`
-更新 ASF 全局配置。
+Update ASF global configuration.
 
 ```python
 config = {
@@ -162,14 +163,14 @@ result = await connector.asf.update_config(config)
 ```
 
 #### `exit()`
-关闭 ASF。
+Shut down ASF.
 
 ```python
 result = await connector.asf.exit()
 ```
 
 #### `restart()`
-重启 ASF。
+Restart ASF.
 
 ```python
 result = await connector.asf.restart()
@@ -178,93 +179,93 @@ result = await connector.asf.restart()
 ### BotController
 
 #### `get_info(bot_names: str)`
-获取指定 Bot 的信息。
+Get information for specified Bot(s).
 
 ```python
-# 单个 Bot
+# Single Bot
 info = await connector.bot.get_info('bot1')
 
-# 多个 Bot（逗号分隔）
+# Multiple Bots (comma-separated)
 info = await connector.bot.get_info('bot1,bot2')
 
-# 所有 Bot
+# All Bots
 info = await connector.bot.get_info('ASF')
 ```
 
 #### `start(bot_names: str)`
-启动指定的 Bot。
+Start specified Bot(s).
 
 ```python
 result = await connector.bot.start('bot1')
 ```
 
 #### `stop(bot_names: str)`
-停止指定的 Bot。
+Stop specified Bot(s).
 
 ```python
 result = await connector.bot.stop('bot1')
 ```
 
 #### `pause(bot_names: str)`
-暂停指定 Bot 的挂卡。
+Pause card farming for specified Bot(s).
 
 ```python
 result = await connector.bot.pause('bot1')
 ```
 
 #### `resume(bot_names: str)`
-恢复指定 Bot 的挂卡。
+Resume card farming for specified Bot(s).
 
 ```python
 result = await connector.bot.resume('bot1')
 ```
 
 #### `redeem(bot_names: str, keys)`
-在指定 Bot 上激活 CD-Key。
+Redeem CD-Keys on specified Bot(s).
 
 ```python
-# 单个 Key
+# Single key
 result = await connector.bot.redeem('bot1', 'XXXXX-XXXXX-XXXXX')
 
-# 多个 Key
+# Multiple keys
 keys = ['KEY1', 'KEY2', 'KEY3']
 result = await connector.bot.redeem('bot1', keys)
 ```
 
 #### `add_license(bot_names: str, licenses)`
-添加免费许可证。
+Add free licenses.
 
 ```python
 result = await connector.bot.add_license('bot1', [12345, 67890])
 ```
 
 #### `get_inventory(bot_names: str, app_id: int = None, context_id: int = None)`
-获取库存信息。
+Get inventory information.
 
 ```python
-# 获取通用库存
+# Get general inventory
 inventory = await connector.bot.get_inventory('bot1')
 
-# 获取特定游戏库存（Steam 交易卡片）
+# Get specific game inventory (Steam trading cards)
 inventory = await connector.bot.get_inventory('bot1', app_id=753, context_id=6)
 ```
 
 #### `input(bot_names: str, input_type: str, input_value: str)`
-为 Bot 提供输入值（如 Steam 令牌）。
+Provide input value for Bot (e.g., Steam Guard code).
 
 ```python
 result = await connector.bot.input('bot1', 'SteamGuard', 'ABCDE')
 ```
 
 #### `rename(bot_name: str, new_name: str)`
-重命名 Bot。
+Rename a Bot.
 
 ```python
 result = await connector.bot.rename('old_bot_name', 'new_bot_name')
 ```
 
 #### `delete_games_to_redeem_in_background(bot_names: str)`
-删除后台游戏激活输出文件。
+Delete background game redemption output files.
 
 ```python
 result = await connector.bot.delete_games_to_redeem_in_background('bot1')
@@ -273,7 +274,7 @@ result = await connector.bot.delete_games_to_redeem_in_background('bot1')
 ### NLogController
 
 #### `get_log_file()`
-获取 ASF 日志文件内容。
+Get ASF log file content.
 
 ```python
 log_content = await connector.nlog.get_log_file()
@@ -282,18 +283,18 @@ if log_content.get('Success'):
 ```
 
 #### `get_log_stream()`
-获取实时日志流（需要 WebSocket 支持）。
+Get real-time log stream (requires WebSocket support).
 
 ```python
-# 注意：此端点需要 WebSocket 客户端
-# 当前返回提示信息，指导如何使用 WebSocket 连接
+# Note: This endpoint requires a WebSocket client
+# Currently returns instructions on how to use WebSocket connection
 result = await connector.nlog.get_log_stream()
 ```
 
 ### TypeController
 
 #### `get_type(type_name: str)`
-获取指定类型的类型信息。
+Get type information for the specified type.
 
 ```python
 type_info = await connector.type.get_type('ArchiSteamFarm.Steam.Storage.BotConfig')
@@ -302,28 +303,28 @@ type_info = await connector.type.get_type('ArchiSteamFarm.Steam.Storage.BotConfi
 ### StructureController
 
 #### `get_structure(structure_name: str)`
-获取指定类型的默认结构。
+Get default structure for the specified type.
 
 ```python
 structure = await connector.structure.get_structure('ArchiSteamFarm.Storage.GlobalConfig')
 ```
 
-### CommandController (IPC API遗留功能)
+### CommandController (IPC API Legacy Feature)
 
-> **注意：** 此 Controller 已被ASF官方标记为遗留功能，建议使用 ASFController 和 BotController 的特定方法。
+> **Note:** This Controller has been marked as legacy by ASF. It's recommended to use specific methods from ASFController and BotController.
 
 #### `execute(command: str)`
-执行命令。
+Execute a command.
 
 ```python
 result = await connector.command.execute('status ASF')
 ```
 
-## 配置管理
+## Configuration Management
 
-### 配置验证
+### Configuration Validation
 
-ASFConfig 使用 Pydantic 进行配置验证：
+ASFConfig uses Pydantic for configuration validation:
 
 ```python
 from ASFConnector.config import ASFConfig
@@ -332,43 +333,43 @@ from pydantic import ValidationError
 try:
     config = ASFConfig(
         asf_host='127.0.0.1',
-        asf_port='1242',  # 自动验证端口范围 (1-65535)
-        asf_path='Api'    # 自动添加前导斜杠 -> '/Api'
+        asf_port='1242',  # Automatic port range validation (1-65535)
+        asf_path='Api'    # Automatically adds leading slash -> '/Api'
     )
     config.log_config()
 except ValidationError as e:
-    print(f"配置验证失败: {e}")
+    print(f"Configuration validation failed: {e}")
 ```
 
-### 配置参数
+### Configuration Parameters
 
-| 参数 | 环境变量 | 默认值 | 说明 |
-|------|---------|--------|------|
-| `asf_host` | `ASF_HOST` | `127.0.0.1` | ASF IPC 主机地址 |
-| `asf_port` | `ASF_PORT` | `1242` | ASF IPC 端口 (1-65535) |
-| `asf_password` | `ASF_PASSWORD` | `None` | ASF IPC 密码（可选） |
-| `asf_path` | `ASF_PATH` | `/Api` | ASF IPC API 路径 |
+| Parameter | Environment Variable | Default | Description |
+|-----------|---------------------|---------|-------------|
+| `asf_host` | `ASF_HOST` | `127.0.0.1` | ASF IPC host address |
+| `asf_port` | `ASF_PORT` | `1242` | ASF IPC port (1-65535) |
+| `asf_password` | `ASF_PASSWORD` | `None` | ASF IPC password (optional) |
+| `asf_path` | `ASF_PATH` | `/Api` | ASF IPC API path |
 
-## 性能优化
+## Performance Optimization
 
-### 连接池复用
+### Connection Pool Reuse
 
-使用 `async with` 上下文管理器可以显著提升性能：
+Using the `async with` context manager significantly improves performance:
 
 ```python
-# 不使用连接池（每次请求创建新连接）
+# Without connection pool (creates new connection for each request)
 async with ASFConnector.from_config() as connector:
-    await connector.asf.get_info()  # 较慢
+    await connector.asf.get_info()  # Slower
 
-# 使用连接池（复用连接，推荐）
+# With connection pool (reuses connections, recommended)
 async with ASFConnector.from_config() as connector:
     for i in range(100):
-        await connector.asf.get_info()  # 更快！
+        await connector.asf.get_info()  # Much faster!
 ```
 
-### 性能对比
+### Performance Comparison
 
-根据测试结果（10次请求）：
+Based on test results (10 requests):
 ```
 Results for 10 requests:
   Legacy API (no pool):     0.109s (10.9ms per request)
@@ -380,9 +381,9 @@ Time saved per request: 10.7ms
 ```
 
 
-## 错误处理
+## Error Handling
 
-所有 API 调用都返回包含 `Success` 字段的字典：
+All API calls return a dictionary containing a `Success` field:
 
 ```python
 response = await connector.asf.get_info()
@@ -395,14 +396,14 @@ else:
     print(f"Error: {error_msg}")
 ```
 
-当 IPC 请求触发 HTTP/网络异常时，响应字典中还会包含：
+When IPC requests trigger HTTP/network exceptions, the response dictionary will also include:
 
-- `ExceptionType`: 对应的自定义异常类名称（例如 `ASF_NotFound`）
-- `Exception`: 具体的异常实例，带有 `status_code` 与原始 `payload`
-- `StatusCode`: HTTP 状态码（若可用）
-- `ResponsePayload`: ASF 返回的 JSON 或纯文本内容（若可用）
+- `ExceptionType`: The corresponding custom exception class name (e.g., `ASF_NotFound`)
+- `Exception`: The specific exception instance with `status_code` and original `payload`
+- `StatusCode`: HTTP status code (if available)
+- `ResponsePayload`: JSON or plain text content returned by ASF (if available)
 
-库中提供了统一的异常定义，可通过 `ASFConnector` 顶层导出或 `ASFConnector.error` 模块使用：
+The library provides unified exception definitions, accessible through the top-level `ASFConnector` export or the `ASFConnector.error` module:
 
 ```python
 from ASFConnector import ASF_BadRequest, ASF_NotFound
@@ -411,15 +412,15 @@ response = await connector.type.get_type('ArchiSteamFarm.Storage.UnknownType')
 if not response['Success']:
     exc = response['Exception']
     if isinstance(exc, ASF_NotFound):
-        print("类型不存在，原始响应:", response.get('ResponsePayload'))
+        print("Type does not exist, original response:", response.get('ResponsePayload'))
     else:
-        raise exc  # 根据需要抛出或记录
+        raise exc  # Raise or log as needed
 ```
 
-所有内置异常均继承自 `ASFConnectorError`，常见 HTTP 状态与异常的映射如下：
+All built-in exceptions inherit from `ASFConnectorError`. Common HTTP status code to exception mappings:
 
-| HTTP 状态码 | 异常类型 |
-|-------------|----------|
+| HTTP Status Code | Exception Type |
+|------------------|----------------|
 | 400 | `ASF_BadRequest` |
 | 401 | `ASF_Unauthorized` |
 | 403 | `ASF_Forbidden` |
@@ -430,11 +431,11 @@ if not response['Success']:
 | 501 | `ASF_NotImplemented` |
 
 
-## 更多信息
+## More Information
 
-- [ASF IPC API 文档](https://github.com/JustArchiNET/ArchiSteamFarm/wiki/IPC)
+- [ASF IPC API Documentation](https://github.com/JustArchiNET/ArchiSteamFarm/wiki/IPC)
 - [ASF Wiki](https://github.com/JustArchiNET/ArchiSteamFarm/wiki)
 
-## 许可证
+## License
 
-本项目遵循与 [dmcallejo/ASFBot](https://github.com/dmcallejo/ASFBot) 相同的许可证。
+This project follows the same license as [dmcallejo/ASFBot](https://github.com/dmcallejo/ASFBot).
