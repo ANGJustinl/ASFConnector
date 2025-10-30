@@ -4,11 +4,8 @@
 
 ASFConnector is an asynchronous Python client for interacting with the ArchiSteamFarm (ASF) IPC API. It features a modular architecture with connection pool reuse, providing high-performance API call experience.
 
-<a href="https://www.python.org">
-  <img src="https://img.shields.io/github/languages/top/angjustinl/ASFConnector" alt="languages">
-</a> 
 <img src="https://img.shields.io/github/license/ANGJustinl/ASFConnector" alt="license">
-<img src="https://img.shields.io/badge/python-3.12-blue.svg" alt="python">
+<img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="python">
 <img src="https://img.shields.io/badge/asyncio-supported-brightgreen.svg" alt="asyncio">
 <img src="https://img.shields.io/badge/ASF-6.2.2.3--latest%20supported-black.svg" alt="ASF">
 <img src="https://img.shields.io/badge/code%20style-ruff-black?style=flat-square&logo=ruff" alt="ruff">
