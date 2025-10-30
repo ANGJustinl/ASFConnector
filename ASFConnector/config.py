@@ -28,6 +28,8 @@ class ASFConfig(BaseSettings):
 
     enable_rich_traceback: bool = Field(default=False, description="Enable rich traceback for better error display")
 
+    asfc_log_level: str = Field(default="INFO", description="ASFConnector Logging level")
+
     @field_validator("asf_host")
     @classmethod
     def validate_host(cls, v: str) -> str:
@@ -60,6 +62,15 @@ class ASFConfig(BaseSettings):
             v = "/" + v
         return v
 
+    @field_validator("asfc_log_level")
+    @classmethod
+    def validate_log_level(cls, v: str) -> str:
+        """Validate log level is one of the allowed values"""
+        allowed_levels = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
+        if v not in allowed_levels:
+            raise ValueError(f"Log level must be one of {allowed_levels}, got {v}")
+        return v
+
     def get_connection_params(self) -> dict:
         """
         Get connection parameters as a dictionary for ASFConnector.
@@ -80,11 +91,11 @@ class ASFConfig(BaseSettings):
 
     def log_config(self) -> None:
         """Log current configuration (without password)"""
-        logger.info(
+        logger.debug(
             f"ASF Config - Host: {self.asf_host}, "
             f"Port: {self.asf_port}, "
             f"Path: {self.asf_path}, "
-            f"Password: {'***' if self.asf_password else 'None'}"
+            f"Log Level: {self.asfc_log_level}"
         )
 
 

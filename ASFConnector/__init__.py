@@ -36,10 +36,10 @@ from .error import (
 )
 from .IPCProtocol import IPCProtocolHandler
 
-# Add console handler with INFO level
+logger.remove()
 logger.add(
     sys.stderr,
-    level="INFO",
+    level=asf_config.asfc_log_level,
     format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",  # noqa
 )
 

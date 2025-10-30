@@ -16,7 +16,7 @@ class NLogController(BaseController):
 
     async def get_log_stream(self):
         """
-        GET /Api/NLog
+        WEBSOCKET /Api/NLog
         Establishes WebSocket connection for real-time logs.
 
         Note: This endpoint requires WebSocket connection and is not currently supported
