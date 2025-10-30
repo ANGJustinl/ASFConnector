@@ -52,6 +52,19 @@ ASFConnector is an asynchronous Python client for interacting with the ArchiStea
 
 ## Quick Start
 
+> **⚠️ IMPORTANT: Configure Default Bot in ASF**
+>
+> Before using any Bot-related operations with this library, you **MUST** configure a `DefaultBot` in your ASF global configuration. Without this setting, all Bot-related operations may exhibit random behavior and produce unexpected results.
+>
+> Add the following to your ASF `ASF.json` configuration file:
+> ```json
+> {
+>   "DefaultBot": "your_primary_bot_name"
+> }
+> ```
+>
+> For more details, see: [ASF Configuration - DefaultBot](https://github.com/JustArchiNET/ArchiSteamFarm/wiki/Configuration#defaultbot)
+
 ### Configuration Setup
 
 1. Copy `.env.example` to `.env`:
@@ -176,6 +189,35 @@ Restart ASF.
 
 ```python
 result = await connector.asf.restart()
+```
+
+#### `update()`
+Update ASF to the latest stable version.
+
+```python
+result = await connector.asf.update()
+```
+
+#### `encrypt(data: dict)`
+Encrypt data using ASF encryption mechanisms.
+
+```python
+data = {
+    "CryptoMethod": 0,  # Encryption method (0 = AES)
+    "StringToEncrypt": "my_sensitive_data"
+}
+result = await connector.asf.encrypt(data)
+```
+
+#### `hash(data: dict)`
+Hash data using ASF hashing mechanisms.
+
+```python
+data = {
+    "HashMethod": 0,  # Hashing method (0 = SHA256)
+    "StringToHash": "my_string_to_hash"
+}
+result = await connector.asf.hash(data)
 ```
 
 ### BotController

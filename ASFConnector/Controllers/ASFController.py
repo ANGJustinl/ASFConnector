@@ -46,3 +46,47 @@ class ASFController(BaseController):
             dict: API response
         """
         return await self._post("/ASF/Restart")
+
+    async def update(self):
+        """
+        POST /Api/ASF/Update
+        Updates ASF to the latest stable version.
+
+        Returns:
+            dict: API response with update status
+        """
+        return await self._post("/ASF/Update")
+
+    async def encrypt(self, data: dict):
+        """
+        POST /Api/ASF/Encrypt
+        Encrypts data with ASF encryption mechanisms.
+
+        Args:
+            data: Dictionary containing data to encrypt. Should have structure:
+                  {
+                      "CryptoMethod": int (encryption method),
+                      "StringToEncrypt": str (string to be encrypted)
+                  }
+
+        Returns:
+            dict: API response with encrypted data
+        """
+        return await self._post("/ASF/Encrypt", payload=data)
+
+    async def hash(self, data: dict):
+        """
+        POST /Api/ASF/Hash
+        Hashes data with ASF hashing mechanisms.
+
+        Args:
+            data: Dictionary containing data to hash. Should have structure:
+                  {
+                      "HashMethod": int (hashing method),
+                      "StringToHash": str (string to be hashed)
+                  }
+
+        Returns:
+            dict: API response with hashed data
+        """
+        return await self._post("/ASF/Hash", payload=data)

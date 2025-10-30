@@ -51,6 +51,19 @@ ASFConnector 是一个用于与 ArchiSteamFarm (ASF) IPC API 交互的异步 Pyt
 
 ## 快速开始
 
+> **⚠️ 重要提示：在 ASF 中配置默认 Bot**
+>
+> 在使用本库的任何 Bot 相关操作之前，您**必须**在 ASF 全局配置中配置 `DefaultBot`。如果没有此设置，所有 Bot 相关操作可能会表现出随机行为，产生与预期不符的结果。
+>
+> 在您的 ASF `ASF.json` 配置文件中添加以下内容：
+> ```json
+> {
+>   "DefaultBot": "your_primary_bot_name"
+> }
+> ```
+>
+> 更多详情请参阅：[ASF 配置 - DefaultBot](https://github.com/JustArchiNET/ArchiSteamFarm/wiki/Configuration#defaultbot)
+
 ### 配置设置
 
 1. 复制 `.env.example` 到 `.env`:
@@ -175,6 +188,35 @@ result = await connector.asf.exit()
 
 ```python
 result = await connector.asf.restart()
+```
+
+#### `update()`
+更新 ASF 到最新稳定版本。
+
+```python
+result = await connector.asf.update()
+```
+
+#### `encrypt(data: dict)`
+使用 ASF 加密机制加密数据。
+
+```python
+data = {
+    "CryptoMethod": 0,  # 加密方法 (0 = AES)
+    "StringToEncrypt": "my_sensitive_data"
+}
+result = await connector.asf.encrypt(data)
+```
+
+#### `hash(data: dict)`
+使用 ASF 哈希机制对数据进行哈希处理。
+
+```python
+data = {
+    "HashMethod": 0,  # 哈希方法 (0 = SHA256)
+    "StringToHash": "my_string_to_hash"
+}
+result = await connector.asf.hash(data)
 ```
 
 ### BotController

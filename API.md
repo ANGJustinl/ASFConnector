@@ -14,6 +14,9 @@
 | POST | /ASF | Updates ASF's global configuration. | ✅ | |
 | POST | /ASF/Exit | Shuts down ASF. | ✅ | |
 | POST | /ASF/Restart | Restarts ASF. | ✅ | |
+| POST | /ASF/Update | Updates ASF to the latest stable version. | ✅ | |
+| POST | /ASF/Encrypt | Encrypts data with ASF encryption mechanisms. | ✅ | |
+| POST | /ASF/Hash | Hashes data with ASF hashing mechanisms. | ✅ | |
 
 ## Bot
 
