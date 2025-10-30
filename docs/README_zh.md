@@ -1,4 +1,5 @@
 <div align="center">
+<img src="../docs/img/logo.png" width="180" height="180" alt="ASFConnector">
 
 # ASFConnector API
 
@@ -144,7 +145,8 @@ asyncio.run(main())
 
 ## API 参考
 
-### ASFController
+<details>
+<summary><b>ASFController</b></summary>
 
 #### `get_info()`
 获取 ASF 全局信息。
@@ -219,7 +221,10 @@ data = {
 result = await connector.asf.hash(data)
 ```
 
-### BotController
+</details>
+
+<details>
+<summary><b>BotController</b></summary>
 
 #### `get_info(bot_names: str)`
 获取指定 Bot 的信息。
@@ -314,7 +319,10 @@ result = await connector.bot.rename('old_bot_name', 'new_bot_name')
 result = await connector.bot.delete_games_to_redeem_in_background('bot1')
 ```
 
-### NLogController
+</details>
+
+<details>
+<summary><b>NLogController</b></summary>
 
 #### `get_log_file()`
 获取 ASF 日志文件内容。
@@ -334,7 +342,10 @@ if log_content.get('Success'):
 result = await connector.nlog.get_log_stream()
 ```
 
-### TypeController
+</details>
+
+<details>
+<summary><b>TypeController</b></summary>
 
 #### `get_type(type_name: str)`
 获取指定类型的类型信息。
@@ -343,7 +354,10 @@ result = await connector.nlog.get_log_stream()
 type_info = await connector.type.get_type('ArchiSteamFarm.Steam.Storage.BotConfig')
 ```
 
-### StructureController
+</details>
+
+<details>
+<summary><b>StructureController</b></summary>
 
 #### `get_structure(structure_name: str)`
 获取指定类型的默认结构。
@@ -352,7 +366,10 @@ type_info = await connector.type.get_type('ArchiSteamFarm.Steam.Storage.BotConfi
 structure = await connector.structure.get_structure('ArchiSteamFarm.Storage.GlobalConfig')
 ```
 
-### CommandController (IPC API遗留功能)
+</details>
+
+<details>
+<summary><b>CommandController (IPC API遗留功能)</b></summary>
 
 > **注意：** 此 Controller 已被ASF官方标记为遗留功能，建议使用 ASFController 和 BotController 的特定方法。
 
@@ -362,6 +379,8 @@ structure = await connector.structure.get_structure('ArchiSteamFarm.Storage.Glob
 ```python
 result = await connector.command.execute('status ASF')
 ```
+
+</details>
 
 ## 配置管理
 
@@ -478,6 +497,12 @@ if not response['Success']:
 
 - [ASF IPC API 文档](https://github.com/JustArchiNET/ArchiSteamFarm/wiki/IPC)
 - [ASF Wiki](https://github.com/JustArchiNET/ArchiSteamFarm/wiki)
+
+## TODO
+
+- [ ] 添加更多单元和集成测试，以超越当前由 actions 支持的范围
+- [ ] 命令行工具，用于快速操作而无需编写代码
+- [ ] WebSocket 支持，用于实时日志流监控（可能）
 
 ## 许可证
 

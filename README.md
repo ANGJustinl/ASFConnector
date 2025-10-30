@@ -1,4 +1,5 @@
 <div align="center">
+<img src="docs/img/logo.png" width="180" height="180" alt="ASFConnector">
 
 # ASFConnector API
 
@@ -142,7 +143,8 @@ asyncio.run(main())
 
 ## API Reference
 
-### ASFController
+<details>
+<summary><b>ASFController</b></summary>
 
 #### `get_info()`
 Get ASF global information.
@@ -217,7 +219,10 @@ data = {
 result = await connector.asf.hash(data)
 ```
 
-### BotController
+</details>
+
+<details>
+<summary><b>BotController</b></summary>
 
 #### `get_info(bot_names: str)`
 Get information for specified Bot(s).
@@ -312,7 +317,10 @@ Delete background game redemption output files.
 result = await connector.bot.delete_games_to_redeem_in_background('bot1')
 ```
 
-### NLogController
+</details>
+
+<details>
+<summary><b>NLogController</b></summary>
 
 #### `get_log_file()`
 Get ASF log file content.
@@ -332,7 +340,10 @@ Get real-time log stream (requires WebSocket support).
 result = await connector.nlog.get_log_stream()
 ```
 
-### TypeController
+</details>
+
+<details>
+<summary><b>TypeController</b></summary>
 
 #### `get_type(type_name: str)`
 Get type information for the specified type.
@@ -341,7 +352,10 @@ Get type information for the specified type.
 type_info = await connector.type.get_type('ArchiSteamFarm.Steam.Storage.BotConfig')
 ```
 
-### StructureController
+</details>
+
+<details>
+<summary><b>StructureController</b></summary>
 
 #### `get_structure(structure_name: str)`
 Get default structure for the specified type.
@@ -350,7 +364,10 @@ Get default structure for the specified type.
 structure = await connector.structure.get_structure('ArchiSteamFarm.Storage.GlobalConfig')
 ```
 
-### CommandController (IPC API Legacy Feature)
+</details>
+
+<details>
+<summary><b>CommandController (IPC API Legacy Feature)</b></summary>
 
 > **Note:** This Controller has been marked as legacy by ASF. It's recommended to use specific methods from ASFController and BotController.
 
@@ -360,6 +377,8 @@ Execute a command.
 ```python
 result = await connector.command.execute('status ASF')
 ```
+
+</details>
 
 ## Configuration Management
 
@@ -477,6 +496,12 @@ All built-in exceptions inherit from `ASFConnectorError`. Common HTTP status cod
 - [API Implementation Details](./docs/API.md)
 - [ASF IPC API Documentation](https://github.com/JustArchiNET/ArchiSteamFarm/wiki/IPC)
 - [ASF Wiki](https://github.com/JustArchiNET/ArchiSteamFarm/wiki)
+
+## TODO
+
+- [ ] More comprehensive unit and integration tests than currently supported by actions
+- [ ] Command-line tool for quick operations without writing code
+- [ ] WebSocket support for real-time log streaming monitoring (maybe)
 
 ## Special Thanks:
 - [ArchiSteamFarm](https://github.com/JustArchiNET/ArchiSteamFarm) for developing and maintaining ArchiSteamFarm.
