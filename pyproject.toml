@@ -1,6 +1,6 @@
 [project]
 name = "asfconnector"
-version = "0.0.1"
+version = "0.0.3"
 description = "Another Python wrapper of ArchiSteamFarm IPC API"
 readme = "README.md"
 authors = [{ name = "ANGJustinl", email = "angjustinl@gmail.com" }]

@@ -8,7 +8,7 @@ ASFConnector is an asynchronous Python client for interacting with the ArchiStea
 <img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="python">
 <img src="https://img.shields.io/badge/asyncio-supported-brightgreen.svg" alt="asyncio">
 <img src="https://img.shields.io/badge/ASF-6.2.2.3--latest%20supported-black.svg" alt="ASF">
-<img src="https://img.shields.io/badge/code%20style-ruff-black?style=flat-square&logo=ruff" alt="ruff">
+<img src="https://img.shields.io/badge/code%20style-ruff-black?logo=ruff" alt="ruff">
 <img src="https://results.pre-commit.ci/badge/github/ANGJustinl/nonebot_plugin_archisteamfarm/master.svg" alt="pre-commit">
 </div>
 
