@@ -100,7 +100,7 @@ class ASFConnector:
         if host and port:
             self.host = host
             self.port = port
-            self.path = path
+            self.path = path if path is not None else "/Api"
             logger.debug("ASFConnector initialized with parameters")
         elif config:
             self.host = config.asf_host

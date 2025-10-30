@@ -91,10 +91,12 @@ class ASFConfig(BaseSettings):
 
     def log_config(self) -> None:
         """Log current configuration (without password)"""
+        password_display = "***" if self.asf_password else "None"
         logger.debug(
             f"ASF Config - Host: {self.asf_host}, "
             f"Port: {self.asf_port}, "
             f"Path: {self.asf_path}, "
+            f"Password: {password_display}, "
             f"Log Level: {self.asfc_log_level}"
         )
 

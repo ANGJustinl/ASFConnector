@@ -166,8 +166,8 @@ def extract_reason_from_exception(ex: Exception):
     if len(ex.args) > 0:
         ex_args = ex.args[0]
         if isinstance(ex_args, Exception):
-            ex_reason = ex_args.reason
-            return extract_reason_from_exception(ex_reason)
+            # ex_reason = ex_args.reason
+            return extract_reason_from_exception(ex_args)
         match = re.match("(^.*0x\\w+>:\\s+)?(?P<reason>.*)$", str(ex_args))
         if match:
             return match.group("reason")
