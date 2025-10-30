@@ -49,7 +49,7 @@
 | Method | Endpoint Path | Description | Basic | Full |
 | :--- | :--- | :--- | :---: | :---: |
 | GET | /NLog/File | Fetches ASF log file. | ✅ | |
-| GET | /NLog | Establishes WebSocket connection for real-time logs. | ✅ | |
+| GET | /NLog | Establishes WebSocket connection for real-time logs. | ❌ | |
 
 ## Structure
 

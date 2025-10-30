@@ -83,7 +83,6 @@ class ASFConnector:
         path: str | None = None,
         password: str | None = None,
         config: ASFConfig | None = None,
-        enable_rich_traceback: bool | None = None,
     ):
         # Enable rich traceback for better error display
         if asf_config.enable_rich_traceback:
@@ -98,17 +97,19 @@ class ASFConnector:
         logger = logger
 
         # If config object is provided, use it; otherwise use provided parameters or defaults
-        if config:
+        if host and port:
+            self.host = host
+            self.port = port
+            self.path = path
+            logger.debug("ASFConnector initialized with parameters")
+        elif config:
             self.host = config.asf_host
             self.port = config.asf_port
             self.path = config.asf_path
             password = config.asf_password
             logger.debug("ASFConnector initialized from config object")
         else:
-            self.host = host or "127.0.0.1"
-            self.port = port or "1242"
-            self.path = path or "/Api"
-            logger.debug("ASFConnector initialized with parameters")
+            raise ASFConnectorError("Either config or host and port must be provided")
 
         logger.info(f"{__name__} initialized. Host: '{self.host}'. Port: '{self.port}'")
         # Create shared connection handler for all controllers
