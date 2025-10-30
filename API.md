@@ -1,12 +1,24 @@
 # API Endpoints
 
+## HealthCheck
+
 | Method | Endpoint Path | Description | Basic | Full |
 | :--- | :--- | :--- | :---: | :---: |
 | GET | /HealthCheck | Checks ASF health status. | ✅ | |
+
+## ASF
+
+| Method | Endpoint Path | Description | Basic | Full |
+| :--- | :--- | :--- | :---: | :---: |
 | GET | /ASF | Fetches common info related to ASF as a whole. | ✅ | |
 | POST | /ASF | Updates ASF's global configuration. | ✅ | |
 | POST | /ASF/Exit | Shuts down ASF. | ✅ | |
 | POST | /ASF/Restart | Restarts ASF. | ✅ | |
+
+## Bot
+
+| Method | Endpoint Path | Description | Basic | Full |
+| :--- | :--- | :--- | :---: | :---: |
 | GET | /Bot/{botNames} | Fetches information about specified bots. | ✅ | ✅ |
 | POST | /Bot/{botNames} | Updates configuration of specified bots. | ✅ | |
 | DELETE | /Bot/{botNames} | Deletes all files related to specified bots. | ✅ | |
@@ -25,8 +37,28 @@
 | DELETE | /Bot/{botNames}/GamesToRedeemInBackground | Removes background game redeemer output files. | ✅ | |
 | POST | /Bot/{botNames}/RedeemPoints/{definitionID} | Redeems points on specified bots. | ✅ | |
 | GET | /Bot/{botNames}/TwoFactorAuthentication/Token | Fetches 2FA tokens of given bots. | ✅ | |
+
+## Command
+
+| Method | Endpoint Path | Description | Basic | Full |
+| :--- | :--- | :--- | :---: | :---: |
 | POST | /Command | Executes a command (LEGACY). | ✅ | ✅ |
+
+## NLog
+
+| Method | Endpoint Path | Description | Basic | Full |
+| :--- | :--- | :--- | :---: | :---: |
 | GET | /NLog/File | Fetches ASF log file. | ✅ | |
 | GET | /NLog | Establishes WebSocket connection for real-time logs. | ✅ | |
+
+## Structure
+
+| Method | Endpoint Path | Description | Basic | Full |
+| :--- | :--- | :--- | :---: | :---: |
 | GET | /Structure/{structure} | Fetches default structure of a given type. | ✅ | |
+
+## Type
+
+| Method | Endpoint Path | Description | Basic | Full |
+| :--- | :--- | :--- | :---: | :---: |
 | GET | /Type/{type} | Fetches type information for a given type. | ✅ | |
