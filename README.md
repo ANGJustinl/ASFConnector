@@ -478,6 +478,6 @@ All built-in exceptions inherit from `ASFConnectorError`. Common HTTP status cod
 - [ASF IPC API Documentation](https://github.com/JustArchiNET/ArchiSteamFarm/wiki/IPC)
 - [ASF Wiki](https://github.com/JustArchiNET/ArchiSteamFarm/wiki)
 
-## License
-
-This project follows the same license as [dmcallejo/ASFBot](https://github.com/dmcallejo/ASFBot).
+## Special Thanks:
+- [ArchiSteamFarm](https://github.com/JustArchiNET/ArchiSteamFarm) for developing and maintaining ArchiSteamFarm.
+- [dmcallejo/ASFBot](https://github.com/dmcallejo/ASFBot). for inspiring the architecture design of this library.
