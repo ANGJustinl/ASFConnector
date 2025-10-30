@@ -11,9 +11,11 @@ ASFConnector 是一个用于与 ArchiSteamFarm (ASF) IPC API 交互的异步 Pyt
 <img src="https://img.shields.io/badge/python-3.12-blue.svg" alt="python">
 <img src="https://img.shields.io/badge/asyncio-supported-brightgreen.svg" alt="asyncio">
 <img src="https://img.shields.io/badge/ASF-6.2.2.3--latest%20supported-black.svg" alt="ASF">
-<img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="ruff">
+<img src="https://img.shields.io/badge/code%20style-ruff-black?style=flat-square&logo=ruff" alt="ruff">
+<img src="https://results.pre-commit.ci/badge/github/ANGJustinl/nonebot_plugin_archisteamfarm/master.svg" alt="pre-commit">
 </div>
 
+### [已实现 API](../API.md)
 
 ## 架构设计
 
