@@ -64,7 +64,7 @@ jobs:
           use_oidc: true
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           env_vars: OS,PYTHON
           use_oidc: true
